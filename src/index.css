@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ---------- Paper & ink (warm oat, warm-grey ink) ---------- */
+  --paper:        #F7F5F0;
+  --paper-deep:   #EFEBE0;
+  --sheet:        #FFFDF8;
+  --sheet-edge:   #E4DFCE;
+  --sheet-edge-2: #D7D1C0;
+  --ink:          #1F231C;
+  --ink-2:        #353A30;
+  --ink-3:        #6A7263;
+  --ink-4:        #A1A595;
+  --hair:         #E4DFCE;
+  --hair-soft:    #EFEBE0;
+  --rule:         #1F231C;
+
+  /* ---------- Forest green — the single accent ---------- */
+  --green-50:   #F0F7F2;
+  --green-100:  #E7EFE9;
+  --green-200:  #BFD5C5;
+  --green-300:  #8FB39C;
+  --green-400:  #5DC57E;
+  --green-500:  #3BB75E;
+  --green-600:  #2EA351;
+  --green-700:  #258043;
+  --green-800:  #1E6638;
+  --green-900:  #14492A;
+
+  /* ---------- State ---------- */
+  --crit:        #B23A2A;
+  --crit-bg:     #FCEFEC;
+  --crit-edge:   #E8B8AE;
+
+  --warn:        #A8741E;
+  --warn-bg:     #FBF3E2;
+  --warn-edge:   #E5D4A8;
+
+  --info:        #3F6E8F;
+  --info-bg:     #ECF1F4;
+  --info-edge:   #BFD0DA;
+
+  --ok:          var(--green-700);
+  --ok-bg:       var(--green-50);
+  --ok-edge:     var(--green-200);
+
+  /* ---------- Type ---------- */
+  --serif:   'Fraunces', 'Georgia', serif;
+  --sans:    'Inter', system-ui, -apple-system, sans-serif;
+  --mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  /* ---------- Geometry ---------- */
+  --r-sharp:   6px;
+  --r-soft:    12px;
+  --r-card:    16px;
+  --r-card-lg: 20px;
+  --r-pill:    9999px;
+  --gutter:    24px;
+
+  /* ---------- Shadows ---------- */
+  --line-1:    0 0 0 1px var(--sheet-edge);
+  --shade-1:   0 1px 0 rgba(31,35,28,0.04);
+  --shade-pop: 0 12px 32px -16px rgba(31,35,28,0.18), 0 2px 8px -4px rgba(31,35,28,0.08);
+
+  /* ---------- Motion ---------- */
+  --ease:     cubic-bezier(.4,0,.2,1);
+  --t-quick:  120ms;
+  --t-normal: 220ms;
+  --t-slow:   360ms;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+}
+
+body {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01", "kern", "calt";
+}
+
+a {
+  color: inherit;
+}
+
+/* prefers-reduced-motion: collapse all transitions above 120ms */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}
