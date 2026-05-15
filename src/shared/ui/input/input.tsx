@@ -2,7 +2,7 @@ import type { InputHTMLAttributes, TextareaHTMLAttributes, ReactNode } from 'rea
 
 export type InputSize = 'sm' | 'md' | 'lg'
 
-const BASE = 'font-sans bg-[var(--sheet)] border border-[var(--sheet-edge-2)] text-[var(--ink)] outline-none w-full transition-[border-color,box-shadow] duration-[var(--t-quick)] ease-[var(--ease)] placeholder:text-[var(--ink-4)] focus:border-[var(--green-500)] focus:shadow-[0_0_0_3px_rgba(59,183,94,0.18)] disabled:opacity-55 disabled:bg-[var(--paper-deep)]'
+const BASE = 'font-sans bg-sheet border border-sheet-edge-2 text-ink outline-none w-full transition-[border-color,box-shadow] duration-quick ease-[var(--ease)] placeholder:text-ink-4 focus:border-green-500 focus:shadow-[0_0_0_3px_rgba(59,183,94,0.18)] disabled:opacity-55 disabled:bg-paper-deep'
 
 const SIZES: Record<InputSize, string> = {
   sm: 'h-9 px-3 text-[13px] rounded-[10px]',
@@ -21,7 +21,7 @@ export function Input({ size = 'md', mono = false, error = false, className, ...
     BASE,
     SIZES[size],
     mono ? 'font-mono' : '',
-    error ? 'border-[var(--crit)] shadow-[0_0_0_3px_rgba(178,58,42,0.14)]' : '',
+    error ? 'border-crit shadow-[0_0_0_3px_rgba(178,58,42,0.14)]' : '',
     className ?? '',
   ]
     .filter(Boolean)
@@ -38,7 +38,7 @@ export function Textarea({ error = false, className, ...rest }: TextareaProps) {
   const classes = [
     BASE,
     'px-4 py-[14px] rounded-[14px] text-[14px] leading-[1.55] resize-y',
-    error ? 'border-[var(--crit)] shadow-[0_0_0_3px_rgba(178,58,42,0.14)]' : '',
+    error ? 'border-crit shadow-[0_0_0_3px_rgba(178,58,42,0.14)]' : '',
     className ?? '',
   ]
     .filter(Boolean)

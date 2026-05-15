@@ -72,14 +72,12 @@ export function ConversationScreen() {
 
   async function handleReport() {
     if (!id || !connection) return
-    setIsSubmittingReport(true)
     try {
       await apiClient.post(Endpoints.REPORTS, {
         connectionId: id,
         reason: 'Reported via conversation',
       })
     } finally {
-      setIsSubmittingReport(false)
       setReportOpen(false)
       navigate(ROUTES.CONVERSATIONS)
     }

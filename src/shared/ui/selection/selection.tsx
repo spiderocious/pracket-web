@@ -11,10 +11,10 @@ export function Checkbox({ label, description, className, ...rest }: CheckboxPro
     return (
       <label
         className={[
-          'flex gap-[14px] items-start p-[12px_14px] border rounded-xl cursor-pointer transition-[border-color,background] duration-[var(--t-quick)] ease-[var(--ease)]',
+          'flex gap-[14px] items-start p-[12px_14px] border rounded-xl cursor-pointer transition-[border-color,background] duration-quick ease-[var(--ease)]',
           rest.checked
-            ? 'border-[var(--green-500)] bg-[var(--green-50)]'
-            : 'border-[var(--sheet-edge)] bg-[var(--paper)]',
+            ? 'border-green-500 bg-green-50'
+            : 'border-hair bg-paper',
           className ?? '',
         ].filter(Boolean).join(' ')}
       >
@@ -181,10 +181,10 @@ export function PillRadio({ label, checked = false, onChange }: PillRadioProps) 
       type="button"
       onClick={onChange}
       className={[
-        'inline-flex items-center gap-[10px] rounded-full border cursor-pointer font-sans font-medium text-[13px] transition-[border-color,background] duration-[var(--t-quick)] ease-[var(--ease)] bg-transparent',
+        'inline-flex items-center gap-[10px] rounded-full border cursor-pointer font-sans font-medium text-[13px] transition-[border-color,background] duration-quick ease-[var(--ease)] bg-transparent',
         checked
-          ? 'border-[var(--green-500)] bg-[var(--green-50)] text-[var(--green-800)]'
-          : 'border-[var(--sheet-edge)] bg-[var(--paper)] text-[var(--ink)]',
+          ? 'border-green-500 bg-green-50 text-green-800'
+          : 'border-hair bg-paper text-ink',
       ].join(' ')}
       style={{ padding: '10px 16px' }}
     >

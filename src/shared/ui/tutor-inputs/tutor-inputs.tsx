@@ -32,7 +32,7 @@ export function SubjectPicker({ query = '', results = [] }: SubjectPickerProps) 
               key={i}
               className={[
                 'flex items-center gap-3 rounded-[10px] px-3 py-[10px] font-sans text-[14px] cursor-pointer transition-[background] duration-[var(--t-quick)] ease-[var(--ease)]',
-                r.selected ? 'bg-[var(--green-50)] text-[var(--green-800)] font-semibold' : 'hover:bg-[var(--green-50)] text-[var(--ink)]',
+                r.selected ? 'bg-green-50 text-green-800 font-semibold' : 'hover:bg-green-50 text-ink',
               ].join(' ')}
             >
               <span className="flex-1">{r.label}</span>

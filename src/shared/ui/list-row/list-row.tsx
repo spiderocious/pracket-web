@@ -43,7 +43,7 @@ export function ListRow({ data, state = 'default', onClick }: ListRowProps) {
     <button
       type="button"
       onClick={onClick}
-      className="grid items-center w-full text-left rounded-[14px] border bg-[var(--sheet)] transition-[border-color,transform] duration-[var(--t-quick)] ease-[var(--ease)] cursor-pointer hover:border-[var(--ink-3)]"
+      className="grid items-center w-full text-left rounded-[14px] border bg-sheet transition-[border-color,transform] duration-quick ease-[var(--ease)] cursor-pointer hover:border-ink-3"
       style={{
         gridTemplateColumns: '44px 1fr auto',
         gap: '14px',

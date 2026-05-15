@@ -167,8 +167,8 @@ export function AdminReportsScreen() {
 
         <Switch>
           <Case when={actionError !== ''}>
-            <div className="mb-4 px-4 py-3 rounded-[12px] bg-[var(--crit-bg)] border border-[var(--crit-edge)]">
-              <p className="font-sans text-[13px] text-[var(--crit)]">{actionError}</p>
+            <div className="mb-4 px-4 py-3 rounded-[12px] bg-crit-bg border border-crit-edge">
+              <p className="font-sans text-[13px] text-crit">{actionError}</p>
             </div>
           </Case>
           <Default>{null}</Default>

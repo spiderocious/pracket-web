@@ -148,8 +148,8 @@ export function TutorOnboardingScreen() {
             <div className="bg-sheet rounded-[20px] border border-hair p-7">
               <h2 className="font-serif font-medium text-[20px] text-ink mb-5">Your teaching profile</h2>
               {profileError !== '' && (
-                <div className="mb-4 px-4 py-3 rounded-[12px] bg-[var(--crit-bg)] border border-[var(--crit-edge)]">
-                  <p className="font-sans text-[13px] text-[var(--crit)]">{profileError}</p>
+                <div className="mb-4 px-4 py-3 rounded-[12px] bg-crit-bg border border-crit-edge">
+                  <p className="font-sans text-[13px] text-crit">{profileError}</p>
                 </div>
               )}
               <form onSubmit={handleProfileSubmit} className="grid gap-5">
@@ -209,8 +209,8 @@ export function TutorOnboardingScreen() {
               </p>
 
               {credError !== '' && (
-                <div className="mb-4 px-4 py-3 rounded-[12px] bg-[var(--crit-bg)] border border-[var(--crit-edge)]">
-                  <p className="font-sans text-[13px] text-[var(--crit)]">{credError}</p>
+                <div className="mb-4 px-4 py-3 rounded-[12px] bg-crit-bg border border-crit-edge">
+                  <p className="font-sans text-[13px] text-crit">{credError}</p>
                 </div>
               )}
 

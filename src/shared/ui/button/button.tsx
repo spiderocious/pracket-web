@@ -14,11 +14,11 @@ const BASE =
   'inline-flex items-center gap-2 whitespace-nowrap font-sans font-semibold cursor-pointer border border-transparent bg-transparent transition-[background,border-color,color,transform] duration-[var(--t-quick)] ease-[var(--ease)] active:translate-y-px focus-visible:outline-none focus-visible:shadow-[0_0_0_3px_rgba(59,183,94,0.28)]'
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: 'bg-[var(--green-500)] border-[var(--green-500)] text-white hover:bg-[var(--green-600)] hover:border-[var(--green-600)] active:bg-[var(--green-700)] active:border-[var(--green-700)]',
-  secondary: 'bg-[var(--sheet)] border-[var(--sheet-edge-2)] text-[var(--ink)] hover:bg-[var(--paper-deep)] hover:border-[var(--ink-3)]',
-  quiet: 'text-[var(--ink-2)] px-[14px] hover:bg-[rgba(31,35,28,0.05)] hover:text-[var(--ink)]',
-  link: 'text-[var(--green-700)] p-0 h-auto bg-transparent hover:text-[var(--green-800)]',
-  danger: 'bg-[var(--crit)] border-[var(--crit)] text-white hover:bg-[#8E2D20] hover:border-[#8E2D20]',
+  primary: 'bg-green-500 border-green-500 text-white hover:bg-green-600 hover:border-green-600 active:bg-green-700 active:border-green-700',
+  secondary: 'bg-sheet border-sheet-edge-2 text-ink hover:bg-paper-deep hover:border-ink-3',
+  quiet: 'text-ink-2 px-[14px] hover:bg-[rgba(31,35,28,0.05)] hover:text-ink',
+  link: 'text-green-700 p-0 h-auto bg-transparent hover:text-green-800',
+  danger: 'bg-crit border-crit text-white hover:bg-[#8E2D20] hover:border-[#8E2D20]',
 }
 
 const SIZES: Record<ButtonSize, string> = {

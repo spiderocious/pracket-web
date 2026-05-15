@@ -71,8 +71,8 @@ export function LoginScreen() {
 
         <div className="bg-sheet rounded-[20px] border border-hair p-7">
           {topError !== '' && (
-            <div className="mb-5 px-4 py-3 rounded-[12px] bg-[var(--crit-bg)] border border-[var(--crit-edge)]">
-              <p className="font-sans text-[13px] text-[var(--crit)]">{topError}</p>
+            <div className="mb-5 px-4 py-3 rounded-[12px] bg-crit-bg border border-crit-edge">
+              <p className="font-sans text-[13px] text-crit">{topError}</p>
             </div>
           )}
 

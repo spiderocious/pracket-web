@@ -74,8 +74,8 @@ function NoteForm({ id, initialPost }: Readonly<NoteFormProps>) {
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
         <Show when={error !== ''}>
-          <div className="mb-5 px-4 py-3 rounded-[12px] bg-[var(--crit-bg)] border border-[var(--crit-edge)]">
-            <p className="font-sans text-[13px] text-[var(--crit)]">{error}</p>
+          <div className="mb-5 px-4 py-3 rounded-[12px] bg-crit-bg border border-crit-edge">
+            <p className="font-sans text-[13px] text-crit">{error}</p>
           </div>
         </Show>
 
