@@ -1,6 +1,5 @@
 import type { RouteObject } from 'react-router-dom'
 import { ROUTES } from '@shared/constants/routes'
-import { discoveryRoutes } from '@features/discovery/discovery.routes'
 import { previewRoutes } from '@features/preview/preview.routes'
 
 export const routes: RouteObject[] = [
@@ -11,6 +10,19 @@ export const routes: RouteObject[] = [
       return { Component: DiscoveryScreen }
     },
   },
-  discoveryRoutes,
+  {
+    path: ROUTES.DISCOVERY,
+    lazy: async () => {
+      const { DiscoveryScreen } = await import('@features/discovery/screen/discovery-screen')
+      return { Component: DiscoveryScreen }
+    },
+  },
+  {
+    path: ROUTES.TUTOR_PROFILE,
+    lazy: async () => {
+      const { TutorProfileScreen } = await import('@features/tutor-profile/screen/tutor-profile-screen')
+      return { Component: TutorProfileScreen }
+    },
+  },
   previewRoutes,
 ]
