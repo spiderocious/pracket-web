@@ -1,12 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@shared/api'
 import { Endpoints } from '@shared/constants/endpoints'
-import type { TutorProfile } from '@shared/types'
+import type { Shortlist } from '@shared/types'
 
 export function useShortlist(enabled: boolean) {
   return useQuery({
     queryKey: ['shortlist'],
-    queryFn: () => apiClient.get<TutorProfile[]>(Endpoints.SHORTLIST),
+    queryFn: () => apiClient.get<Shortlist>(Endpoints.SHORTLIST),
     enabled,
   })
 }

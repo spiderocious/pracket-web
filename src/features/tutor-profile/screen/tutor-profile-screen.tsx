@@ -34,7 +34,7 @@ export function TutorProfileScreen() {
   const { add, remove } = useShortlistToggle(id ?? '')
 
   const tutor = profileQuery.data
-  const isShortlisted = shortlistQuery.data?.some(t => t.id === id) ?? false
+  const isShortlisted = shortlistQuery.data?.tutorIds.includes(id ?? '') ?? false
 
   const canConnect = isStudent(user?.role)
   const canShortlist = isStudent(user?.role)

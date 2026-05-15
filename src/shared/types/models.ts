@@ -36,6 +36,7 @@ export interface TutorProfile {
   readonly photoKey?: string
   readonly verificationStatus: VerificationStatus
   readonly isListed: boolean
+  readonly availability?: TutorAvailabilitySlot[]
 }
 
 export interface Credential {
@@ -51,12 +52,19 @@ export interface Connection {
   readonly id: string
   readonly tutorId: string
   readonly studentId: string
+  readonly tutorUserId?: string
   readonly amount: number
   readonly status: ConnectionStatus
-  readonly tutorName?: string
-  readonly studentName?: string
+  readonly openedAt?: string
   readonly createdAt: string
 }
+
+export interface Shortlist {
+  readonly id: string
+  readonly userId: string
+  readonly tutorIds: string[]
+}
+
 
 export interface Message {
   readonly id: string
@@ -92,8 +100,17 @@ export interface SearchTutor {
 export interface Report {
   readonly id: string
   readonly connectionId: string
+  readonly reporterId: string
+  readonly tutorId: string
   readonly reason: string
   readonly status: ReportStatus
   readonly adminNote?: string
+  readonly resolvedAt?: string
   readonly createdAt: string
+}
+
+export interface TutorAvailabilitySlot {
+  readonly day: 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun'
+  readonly from: string
+  readonly to: string
 }
