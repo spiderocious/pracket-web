@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Navigate, Link } from 'react-router-dom'
+import { useNavigate, Navigate, Link, useSearchParams } from 'react-router-dom'
 import { Switch, Case } from 'meemaw'
 import { Logo, Button, Input, Field } from '@shared/ui'
 import { ApiRequestError } from '@shared/api'
@@ -51,6 +51,8 @@ function RoleCard({ title, description, selected, onClick }: Readonly<RoleCardPr
 export function RegisterScreen() {
   const { user, login } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const next = searchParams.get('next')
 
   const [step, setStep] = useState<Step>('role')
   const [role, setRole] = useState<UserRole>('student')
@@ -62,7 +64,7 @@ export function RegisterScreen() {
   const [topError, setTopError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  if (user) return <Navigate to={ROUTES.ROOT} replace />
+  if (user) return <Navigate to={next ?? ROUTES.ROOT} replace />
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -79,7 +81,8 @@ export function RegisterScreen() {
         role,
       })
       login(res.token, res.user)
-      navigate(res.user.role === 'tutor' ? ROUTES.TUTOR_ONBOARDING : ROUTES.ROOT)
+      const dest = next ?? (res.user.role === 'tutor' ? ROUTES.TUTOR_ONBOARDING : ROUTES.ROOT)
+      navigate(dest, { replace: true })
     } catch (err) {
       if (err instanceof ApiRequestError) {
         if (err.fieldErrors) {
@@ -217,7 +220,10 @@ export function RegisterScreen() {
 
         <p className="text-center font-sans text-[13px] text-ink-3 mt-5">
           Already have an account?{' '}
-          <Link to={ROUTES.LOGIN} className="text-green-700 font-medium hover:text-green-800">
+          <Link
+            to={next ? `${ROUTES.LOGIN}?next=${encodeURIComponent(next)}` : ROUTES.LOGIN}
+            className="text-green-700 font-medium hover:text-green-800"
+          >
             Sign in
           </Link>
         </p>

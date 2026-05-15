@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Navigate, Link } from 'react-router-dom'
+import { useNavigate, Navigate, Link, useSearchParams } from 'react-router-dom'
 import { Logo, Button, Input, Field } from '@shared/ui'
 import { ApiRequestError } from '@shared/api'
 import { apiClient } from '@shared/api'
@@ -21,6 +21,8 @@ interface FieldErrors {
 export function LoginScreen() {
   const { user, login } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const next = searchParams.get('next')
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -28,7 +30,7 @@ export function LoginScreen() {
   const [topError, setTopError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  if (user) return <Navigate to={ROUTES.ROOT} replace />
+  if (user) return <Navigate to={next ?? ROUTES.ROOT} replace />
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -39,7 +41,8 @@ export function LoginScreen() {
     try {
       const res = await apiClient.post<AuthResponse>(Endpoints.LOGIN, { email, password })
       login(res.token, res.user)
-      navigate(res.user.role === 'tutor' ? ROUTES.TUTOR_DASHBOARD : ROUTES.ROOT)
+      const dest = next ?? (res.user.role === 'tutor' ? ROUTES.TUTOR_DASHBOARD : ROUTES.ROOT)
+      navigate(dest, { replace: true })
     } catch (err) {
       if (err instanceof ApiRequestError) {
         if (err.fieldErrors) {
@@ -57,6 +60,10 @@ export function LoginScreen() {
       setIsLoading(false)
     }
   }
+
+  const registerHref = next
+    ? `${ROUTES.REGISTER}?next=${encodeURIComponent(next)}`
+    : ROUTES.REGISTER
 
   return (
     <div className="min-h-screen bg-paper flex items-center justify-center px-4">
@@ -109,7 +116,7 @@ export function LoginScreen() {
 
         <p className="text-center font-sans text-[13px] text-ink-3 mt-5">
           Don&apos;t have an account?{' '}
-          <Link to={ROUTES.REGISTER} className="text-green-700 font-medium hover:text-green-800">
+          <Link to={registerHref} className="text-green-700 font-medium hover:text-green-800">
             Create one
           </Link>
         </p>

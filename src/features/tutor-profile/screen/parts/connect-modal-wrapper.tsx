@@ -12,17 +12,16 @@ export function ConnectModalWrapper({ tutor, onClose, onSuccess }: Readonly<Conn
   const connect = useConnect()
 
   function handleConnect() {
-    connect.mutate(
-      { tutorId: tutor.id },
-      { onSuccess }
-    )
+    connect.mutate({ tutorId: tutor.id }, { onSuccess })
   }
+
+  const name = (tutor.displayName ?? '').split(' ')[0] || 'this tutor'
 
   return (
     <ConnectModal
-      tutorName={tutor.displayName}
+      tutorName={name}
       subject={tutor.subjects?.[0] ?? 'Tutoring'}
-      connectFee={tutor.connectionFee ?? 0}
+      connectFee={tutor.connectionFee ?? 500}
       sessionRate={tutor.rate ?? 0}
       onCancel={onClose}
       onConnect={handleConnect}

@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Switch, Case, Default, Show, Repeat } from 'meemaw'
-import { ProfileCard, Chip, PriceBlock, Button, EmptyState, SkeletonRow } from '@shared/ui'
+import { ProfileCard, Chip, PriceRail, Button, EmptyState, SkeletonRow, Banner } from '@shared/ui'
 import { Heart, BookOpen } from '@shared/ui/icons'
-import { formatNaira } from '@shared/helpers'
-import { isStudent } from '@shared/helpers'
+import { formatNaira, isStudent } from '@shared/helpers'
 import { ROUTES } from '@shared/constants/routes'
 import { useAuth } from '@features/auth/providers/use-auth'
 import { useTutorProfile } from '../api/use-tutor-profile'
@@ -23,6 +22,12 @@ function SkeletonProfile() {
   )
 }
 
+function formatFormat(f: string): string {
+  if (f === 'inPerson') return 'In-person'
+  if (f === 'both') return 'Online & In-person'
+  return 'Online'
+}
+
 export function TutorProfileScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -39,6 +44,7 @@ export function TutorProfileScreen() {
   const canConnect = isStudent(user?.role)
   const canShortlist = isStudent(user?.role)
   const isVerified = tutor?.verificationStatus === 'verified'
+  const tutorFirstName = (tutor?.displayName ?? '').split(' ')[0] || 'this tutor'
 
   function handleShortlistToggle() {
     if (isShortlisted) {
@@ -52,6 +58,8 @@ export function TutorProfileScreen() {
     setConnectOpen(false)
     navigate(ROUTES.CONVERSATIONS)
   }
+
+  const loginWithNext = `${ROUTES.LOGIN}?next=${encodeURIComponent(ROUTES.TUTOR_PROFILE.replace(':id', id ?? ''))}`
 
   return (
     <div className="min-h-screen bg-paper">
@@ -71,20 +79,36 @@ export function TutorProfileScreen() {
         <Default>
           {tutor !== undefined && (
             <>
-              <ProfileHeader id={tutor.id} displayName={tutor.displayName} />
+              <ProfileHeader id={tutor.id} displayName={tutor.displayName ?? 'Tutor'} />
 
               <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-                <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start">
+                <Show when={!isVerified}>
+                  <div className="mb-6">
+                    <Banner
+                      variant="warn"
+                      title="Verification pending"
+                      sub="This tutor's identity is under review. You won't be able to connect until they're verified."
+                    />
+                  </div>
+                </Show>
+
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8 items-start">
 
                   {/* Left column — profile card + posts */}
                   <div>
                     <ProfileCard
-                      name={tutor.displayName}
-                      role={[tutor.subjects?.slice(0, 3).join(', '), tutor.levels?.slice(0, 2).join(' · ')].filter(Boolean).join(' · ')}
+                      name={tutor.displayName ?? 'Tutor'}
+                      role={[
+                        tutor.subjects?.slice(0, 3).join(', '),
+                        tutor.levels?.slice(0, 2).join(' · '),
+                        tutor.location,
+                      ].filter(Boolean).join(' · ')}
                       blurb={tutor.bio ?? 'No bio provided.'}
                       meta={[
+                        tutor.format ? { label: 'Format', value: formatFormat(tutor.format) } : null,
                         tutor.location ? { label: 'Location', value: tutor.location } : null,
-                        tutor.format ? { label: 'Format', value: tutor.format === 'inPerson' ? 'In-person' : tutor.format === 'both' ? 'Online & In-person' : 'Online' } : null,
+                        tutor.rate ? { label: 'Rate', value: `${formatNaira(tutor.rate)} / hr` } : null,
+                        tutor.connectionFee ? { label: 'Connect fee', value: formatNaira(tutor.connectionFee) } : null,
                       ].filter((m): m is { label: string; value: string } => m !== null)}
                     >
                       <Switch>
@@ -105,57 +129,74 @@ export function TutorProfileScreen() {
                     <TutorPosts tutorId={tutor.id} />
                   </div>
 
-                  {/* Right column — pricing + actions */}
-                  <div className="grid gap-4">
-                    <div className="bg-sheet rounded-[18px] border border-hair p-6">
-                      <div className="flex items-end justify-between mb-5">
-                        <PriceBlock
-                          label="Session rate"
-                          amount={formatNaira(tutor.rate ?? 0)}
-                          unit="/ hr"
-                          size="lg"
-                        />
-                        <Show when={canShortlist}>
-                          <button
-                            onClick={handleShortlistToggle}
-                            disabled={add.isPending || remove.isPending}
-                            className="w-9 h-9 flex items-center justify-center rounded-full border border-hair text-ink-3 hover:border-crit hover:text-crit transition-colors duration-quick disabled:opacity-40"
-                            aria-label={isShortlisted ? 'Remove from shortlist' : 'Add to shortlist'}
-                          >
-                            <Heart
-                              className="w-4 h-4 transition-colors duration-quick"
-                              style={isShortlisted ? { fill: 'var(--crit)', color: 'var(--crit)' } : undefined}
-                            />
-                          </button>
-                        </Show>
-                      </div>
-
+                  {/* Right column — PriceRail + actions */}
+                  <div className="lg:sticky lg:top-[72px] grid gap-3">
+                    <PriceRail
+                      items={[
+                        {
+                          label: 'Lesson rate',
+                          amount: formatNaira(tutor.rate ?? 0),
+                          unit: 'per hour',
+                        },
+                        {
+                          label: 'Connection fee · one-time',
+                          amount: formatNaira(tutor.connectionFee ?? 500),
+                          sub: `Paid to Pracket. Lets you message ${tutorFirstName} and book lessons.`,
+                        },
+                      ]}
+                    >
+                      {/* Logged-in student */}
                       <Show when={canConnect}>
                         <Button
                           variant="primary"
-                          className="w-full"
+                          size="lg"
+                          block
                           onClick={() => setConnectOpen(true)}
                           disabled={!isVerified || !tutor.isListed}
                         >
-                          Connect with {tutor.displayName?.split(' ')[0] ?? tutor.displayName}
+                          Connect with {tutorFirstName}
                         </Button>
-                        <Show when={!isVerified}>
-                          <p className="font-sans text-[12px] text-ink-4 text-center mt-2">
-                            This tutor is awaiting verification
-                          </p>
-                        </Show>
                       </Show>
 
+                      {/* Guest — carry ?next= so they land back here after login */}
                       <Show when={!user}>
                         <Button
-                          variant="secondary"
-                          className="w-full"
-                          onClick={() => navigate(ROUTES.LOGIN)}
+                          variant="primary"
+                          size="lg"
+                          block
+                          onClick={() => navigate(loginWithNext)}
                         >
                           Sign in to connect
                         </Button>
+                        <p className="font-sans text-[12px] text-ink-4 text-center mt-2">
+                          Already have an account? You'll come right back.
+                        </p>
                       </Show>
-                    </div>
+
+                      {/* Logged-in non-student (tutor viewing another tutor) */}
+                      <Show when={!!user && !canConnect}>
+                        <p className="font-sans text-[13px] text-ink-3 text-center py-1">
+                          Only students can connect with tutors.
+                        </p>
+                      </Show>
+                    </PriceRail>
+
+                    {/* Shortlist heart — students only, below the rail */}
+                    <Show when={canShortlist}>
+                      <button
+                        type="button"
+                        onClick={handleShortlistToggle}
+                        disabled={add.isPending || remove.isPending}
+                        className="flex items-center justify-center gap-2 w-full h-10 rounded-[14px] border border-hair text-ink-3 hover:border-crit hover:text-crit transition-colors duration-quick disabled:opacity-40 font-sans text-[13px]"
+                        aria-label={isShortlisted ? 'Remove from shortlist' : 'Add to shortlist'}
+                      >
+                        <Heart
+                          className="w-4 h-4"
+                          style={isShortlisted ? { fill: 'var(--crit)', color: 'var(--crit)' } : undefined}
+                        />
+                        {isShortlisted ? 'Saved to shortlist' : 'Save to shortlist'}
+                      </button>
+                    </Show>
                   </div>
 
                 </div>
