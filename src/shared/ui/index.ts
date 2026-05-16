@@ -1,4 +1,5 @@
 export { Logo } from './logo'
+export * from './site-header'
 export * from './app-shell'
 export * from './button'
 export * from './input'

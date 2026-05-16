@@ -1,7 +1,7 @@
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate, useLocation } from 'react-router-dom'
 import { useQueries } from '@tanstack/react-query'
 import { Repeat, Switch, Case, Default, Loadable } from 'meemaw'
-import { ListRow, EmptyState } from '@shared/ui'
+import { ListRow, EmptyState, SiteHeader } from '@shared/ui'
 import { SkeletonRow } from '@shared/ui'
 import { Heart } from '@shared/ui/icons'
 import { formatNaira, avatarToneFromId } from '@shared/helpers'
@@ -25,6 +25,7 @@ function SkeletonList() {
 export function ShortlistScreen() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const shortlistQuery = useShortlist(!!user)
   const tutorIds = shortlistQuery.data?.tutorIds ?? []
 
@@ -35,13 +36,14 @@ export function ShortlistScreen() {
     })),
   })
 
-  if (!user) return <Navigate to={ROUTES.LOGIN} replace />
+  if (!user) return <Navigate to={`${ROUTES.LOGIN}?next=${encodeURIComponent(location.pathname)}`} replace />
 
   const isLoading = shortlistQuery.isLoading || tutorQueries.some(q => q.isLoading)
   const tutors = tutorQueries.map(q => q.data).filter((t): t is TutorProfile => t !== undefined)
 
   return (
     <div className="min-h-screen bg-paper">
+      <SiteHeader />
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
         <div className="py-8 border-b border-hair mb-6">
           <h1 className="font-serif font-medium text-[28px] tracking-display text-ink">

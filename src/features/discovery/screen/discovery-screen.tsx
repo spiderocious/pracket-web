@@ -38,6 +38,7 @@ export function DiscoveryScreen() {
             totalPages={totalPages}
             total={total}
             onPageChange={page => { setFilter('page', page); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+            onQuickSearch={q => { setFilter('q', q); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
           />
         </div>
       </div>

@@ -11,13 +11,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const BASE =
-  'inline-flex items-center gap-2 whitespace-nowrap font-sans font-semibold cursor-pointer border border-transparent bg-transparent transition-[background,border-color,color,transform] duration-[var(--t-quick)] ease-[var(--ease)] active:translate-y-px focus-visible:outline-none focus-visible:shadow-[0_0_0_3px_rgba(59,183,94,0.28)]'
+  'inline-flex items-center gap-2 whitespace-nowrap font-sans font-semibold cursor-pointer border border-transparent transition-[background,border-color,color,transform] duration-[var(--t-quick)] ease-[var(--ease)] active:translate-y-px focus-visible:outline-none focus-visible:shadow-[0_0_0_3px_rgba(59,183,94,0.28)]'
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary: 'bg-green-500 border-green-500 text-white hover:bg-green-600 hover:border-green-600 active:bg-green-700 active:border-green-700',
   secondary: 'bg-sheet border-sheet-edge-2 text-ink hover:bg-paper-deep hover:border-ink-3',
-  quiet: 'text-ink-2 px-[14px] hover:bg-[rgba(31,35,28,0.05)] hover:text-ink',
-  link: 'text-green-700 p-0 h-auto bg-transparent hover:text-green-800',
+  quiet: 'text-ink-2 px-[14px] hover:bg-[rgba(31,35,28,0.05)] hover:text-ink [background:transparent]',
+  link: 'text-green-700 p-0 h-auto [background:transparent] hover:text-green-800',
   danger: 'bg-crit border-crit text-white hover:bg-[#8E2D20] hover:border-[#8E2D20]',
 }
 

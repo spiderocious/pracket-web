@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Navigate, Link, useSearchParams } from 'react-router-dom'
+import { useNavigate, Navigate, Link, useSearchParams, useLocation } from 'react-router-dom'
 import { Switch, Case } from 'meemaw'
 import { Logo, Button, Input, Field } from '@shared/ui'
 import { ApiRequestError } from '@shared/api'
@@ -52,7 +52,8 @@ export function RegisterScreen() {
   const { user, login } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const next = searchParams.get('next')
+  const location = useLocation()
+  const next = searchParams.get('next') ?? (location.state as { next?: string } | null)?.next ?? null
 
   const [step, setStep] = useState<Step>('role')
   const [role, setRole] = useState<UserRole>('student')
@@ -81,7 +82,8 @@ export function RegisterScreen() {
         role,
       })
       login(res.token, res.user)
-      const dest = next ?? (res.user.role === 'tutor' ? ROUTES.TUTOR_ONBOARDING : ROUTES.ROOT)
+      const defaultDest = res.user.role === 'tutor' ? ROUTES.TUTOR_ONBOARDING : ROUTES.STUDENT_DASHBOARD
+      const dest = next ?? defaultDest
       navigate(dest, { replace: true })
     } catch (err) {
       if (err instanceof ApiRequestError) {

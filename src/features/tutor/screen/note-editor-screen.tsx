@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useNavigate, useParams, Navigate } from 'react-router-dom'
+import { useNavigate, useParams, Navigate, useLocation } from 'react-router-dom'
 import { Show } from 'meemaw'
-import { Button, Input, Field, Textarea } from '@shared/ui'
+import { SiteHeader, Button, Input, Field, Textarea } from '@shared/ui'
 import { ChevronLeft } from '@shared/ui/icons'
 import { ROUTES } from '@shared/constants/routes'
 import { useAuth } from '@features/auth/providers/use-auth'
@@ -55,13 +55,14 @@ function NoteForm({ id, initialPost }: Readonly<NoteFormProps>) {
 
   return (
     <div className="min-h-screen bg-paper">
-      <div className="bg-paper border-b border-hair sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
+      <SiteHeader />
+      <div className="bg-paper border-b border-hair">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-11 flex items-center gap-3">
           <Button variant="quiet" size="sm" onClick={() => navigate(ROUTES.TUTOR_DASHBOARD)} className="flex items-center gap-1.5 -ml-2">
             <ChevronLeft className="w-4 h-4" />
             Dashboard
           </Button>
-          <span className="font-sans font-medium text-[14px] text-ink-3 flex-1">
+          <span className="font-sans text-[13px] font-medium text-ink-3 flex-1">
             {isEditing ? 'Edit note' : 'New note'}
           </span>
           <Show when={isEditing}>
@@ -123,10 +124,11 @@ function NoteForm({ id, initialPost }: Readonly<NoteFormProps>) {
 export function NoteEditorScreen() {
   const { id } = useParams<{ id?: string }>()
   const { user } = useAuth()
+  const location = useLocation()
   const profileQuery = useMyProfile()
   const postsQuery = useMyPosts(profileQuery.data?.id ?? '')
 
-  if (!user) return <Navigate to={ROUTES.LOGIN} replace />
+  if (!user) return <Navigate to={`${ROUTES.LOGIN}?next=${encodeURIComponent(location.pathname)}`} replace />
   if (!isTutor(user.role)) return <Navigate to={ROUTES.ROOT} replace />
 
   const isEditing = !!id

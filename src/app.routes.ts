@@ -3,12 +3,12 @@ import { ROUTES } from '@shared/constants/routes'
 import { previewRoutes } from '@features/preview/preview.routes'
 
 export const routes: RouteObject[] = [
-  // Discovery / landing
+  // Landing
   {
     path: ROUTES.ROOT,
     lazy: async () => {
-      const { DiscoveryScreen } = await import('@features/discovery/screen/discovery-screen')
-      return { Component: DiscoveryScreen }
+      const { LandingScreen } = await import('@features/landing/screen/landing-screen')
+      return { Component: LandingScreen }
     },
   },
   {
@@ -91,6 +91,14 @@ export const routes: RouteObject[] = [
     lazy: async () => {
       const { NoteEditorScreen } = await import('@features/tutor/screen/note-editor-screen')
       return { Component: NoteEditorScreen }
+    },
+  },
+  // Student dashboard
+  {
+    path: ROUTES.STUDENT_DASHBOARD,
+    lazy: async () => {
+      const { StudentDashboardScreen } = await import('@features/student/screen/student-dashboard-screen')
+      return { Component: StudentDashboardScreen }
     },
   },
   // Admin

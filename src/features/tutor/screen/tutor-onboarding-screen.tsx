@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate, useLocation } from 'react-router-dom'
 import { Switch, Case, Show } from 'meemaw'
 import { Logo, Button, Input, Field, Textarea } from '@shared/ui'
 import { DocCard } from '@shared/ui'
@@ -70,6 +70,7 @@ function PillToggle({ label, active, onClick }: Readonly<PillToggleProps>) {
 export function TutorOnboardingScreen() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const routerLocation = useLocation()
   const updateProfile = useUpdateProfile()
   const credentialsQuery = useMyCredentials()
   const submitCredential = useSubmitCredential()
@@ -90,8 +91,8 @@ export function TutorOnboardingScreen() {
   const [credType, setCredType] = useState<CredentialType>('degree')
   const [credError, setCredError] = useState('')
 
-  if (!user) return <Navigate to={ROUTES.LOGIN} replace />
-  if (!isTutor(user.role)) return <Navigate to={ROUTES.ROOT} replace />
+  if (!user) return <Navigate to={`${ROUTES.LOGIN}?next=${encodeURIComponent(routerLocation.pathname)}`} replace />
+  if (!isTutor(user.role)) return <Navigate to={ROUTES.DISCOVERY} replace />
 
   function toggleLevel(level: string) {
     setSelectedLevels(prev =>

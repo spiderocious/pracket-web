@@ -1,6 +1,7 @@
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate, useLocation } from 'react-router-dom'
+import { useQueries } from '@tanstack/react-query'
 import { Show, Switch, Case, Default, Repeat, Loadable } from 'meemaw'
-import { Logo, Button, Chip, Banner } from '@shared/ui'
+import { SiteHeader, Button, Chip, Banner, ConversationItem } from '@shared/ui'
 import { SkeletonRow } from '@shared/ui'
 import { formatNaira } from '@shared/helpers'
 import { ROUTES } from '@shared/constants/routes'
@@ -9,6 +10,19 @@ import { isTutor } from '@shared/helpers'
 import { useMyProfile, useToggleVisibility } from '../api/use-my-profile'
 import { useMyPosts } from '../api/use-my-posts'
 import { useConnections } from '@features/conversations/api/use-connections'
+import { apiClient } from '@shared/api'
+import { Endpoints } from '@shared/constants/endpoints'
+import type { Connection, TutorProfile } from '@shared/types'
+
+function formatTime(iso: string): string {
+  const date = new Date(iso)
+  const now = new Date()
+  const diffDays = Math.floor((now.getTime() - date.getTime()) / 86400000)
+  if (diffDays === 0) return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+  if (diffDays === 1) return 'Yesterday'
+  if (diffDays < 7) return date.toLocaleDateString('en-GB', { weekday: 'short' })
+  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+}
 
 function StatBlock({ label, value }: Readonly<{ label: string; value: string }>) {
   return (
@@ -20,19 +34,47 @@ function StatBlock({ label, value }: Readonly<{ label: string; value: string }>)
 }
 
 export function TutorDashboardScreen() {
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const profileQuery = useMyProfile()
   const connectionsQuery = useConnections()
   const profile = profileQuery.data
   const postsQuery = useMyPosts(profile?.id ?? '')
   const toggleVisibility = useToggleVisibility()
 
-  if (!user) return <Navigate to={ROUTES.LOGIN} replace />
+  const connections = connectionsQuery.data ?? []
+
+  // For connections where this user is the student side, fetch tutor profiles
+  // (Tutors normally appear as tutorId, but connections might have both sides)
+  const studentConnections = connections.filter(c => user != null && c.studentId === user.id)
+  const tutorIdsToFetch = studentConnections.map(c => c.tutorId)
+
+  const tutorQueries = useQueries({
+    queries: tutorIdsToFetch.map(tutorId => ({
+      queryKey: ['tutor', tutorId],
+      queryFn: () => apiClient.get<TutorProfile>(Endpoints.TUTOR_PUBLIC(tutorId)),
+      staleTime: 5 * 60 * 1000,
+    })),
+  })
+
+  const tutorMap = new Map<string, TutorProfile>()
+  tutorIdsToFetch.forEach((id, i) => {
+    const data = tutorQueries[i]?.data
+    if (data) tutorMap.set(id, data)
+  })
+
+  if (!user) return <Navigate to={`${ROUTES.LOGIN}?next=${encodeURIComponent(location.pathname)}`} replace />
   if (!isTutor(user.role)) return <Navigate to={ROUTES.ROOT} replace />
 
-  const connections = connectionsQuery.data ?? []
   const posts = postsQuery.data ?? []
+
+  function connectionLabel(conn: Connection): string {
+    if (conn.studentId === user!.id) {
+      return tutorMap.get(conn.tutorId)?.displayName ?? 'Your tutor'
+    }
+    return 'Student'
+  }
   const isVerified = profile?.verificationStatus === 'verified'
   const isListed = profile?.isListed ?? false
 
@@ -43,18 +85,7 @@ export function TutorDashboardScreen() {
 
   return (
     <div className="min-h-screen bg-paper">
-      {/* Header */}
-      <div className="bg-paper border-b border-hair">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <Logo />
-          <div className="flex items-center gap-3">
-            <Button variant="quiet" size="sm" onClick={() => navigate(ROUTES.CONVERSATIONS)}>
-              Messages {connections.length > 0 && `(${connections.length})`}
-            </Button>
-            <Button variant="quiet" size="sm" onClick={logout}>Sign out</Button>
-          </div>
-        </div>
-      </div>
+      <SiteHeader />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         <Loadable loading={profileQuery.isLoading} loadingComponent={
@@ -117,6 +148,42 @@ export function TutorDashboardScreen() {
             <StatBlock label="Connections" value={String(connections.length)} />
             <StatBlock label="Notes" value={String(posts.length)} />
             <StatBlock label="Format" value={profile?.format ?? '—'} />
+          </div>
+
+          {/* Recent conversations */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-serif font-medium text-[20px] text-ink">Messages</h2>
+              <Button variant="quiet" size="sm" onClick={() => navigate(ROUTES.CONVERSATIONS)}>
+                View all
+              </Button>
+            </div>
+            <Switch>
+              <Case when={connections.length === 0}>
+                <div className="bg-sheet rounded-[16px] border border-hair p-6 text-center">
+                  <p className="font-sans text-[13px] text-ink-3">No conversations yet. Students will reach out once you&apos;re listed.</p>
+                </div>
+              </Case>
+              <Default>
+                <div className="rounded-[16px] border border-hair overflow-hidden">
+                  <Repeat each={connections.slice(0, 5)}>
+                    {(conn) => (
+                      <div
+                        key={conn.id}
+                        onClick={() => navigate(ROUTES.CONVERSATION.replace(':id', conn.id))}
+                        className="cursor-pointer"
+                      >
+                        <ConversationItem
+                          name={connectionLabel(conn)}
+                          preview={conn.status === 'closed' ? 'Conversation closed' : 'Tap to open'}
+                          time={formatTime(conn.openedAt ?? conn.createdAt)}
+                        />
+                      </div>
+                    )}
+                  </Repeat>
+                </div>
+              </Default>
+            </Switch>
           </div>
 
           {/* Sunday Notes */}

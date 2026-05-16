@@ -16,6 +16,7 @@ interface DiscoveryResultsProps {
   readonly totalPages: number
   readonly total: number
   readonly onPageChange: (page: number) => void
+  readonly onQuickSearch: (q: string) => void
 }
 
 const SKELETON_WIDTHS = [
@@ -54,7 +55,11 @@ function SkeletonList() {
   )
 }
 
-function EmptyPrompt() {
+interface EmptyPromptProps {
+  readonly onQuickSearch: (q: string) => void
+}
+
+function EmptyPrompt({ onQuickSearch }: EmptyPromptProps) {
   return (
     <div className="py-16 text-center">
       <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-sheet border border-hair text-ink-4 mb-5">
@@ -71,6 +76,8 @@ function EmptyPrompt() {
           {(q) => (
             <button
               key={q}
+              type="button"
+              onClick={() => onQuickSearch(q)}
               className="h-8 px-4 rounded-pill text-[12.5px] font-sans bg-sheet border border-hair text-ink-2 hover:border-green-500 hover:text-green-700 hover:bg-green-50 transition-colors duration-quick"
             >
               {q}
@@ -196,7 +203,7 @@ function PageButton({
   )
 }
 
-export function DiscoveryResults({ tutors, isLoading, isFetching, hasQuery, page, totalPages, total, onPageChange }: DiscoveryResultsProps) {
+export function DiscoveryResults({ tutors, isLoading, isFetching, hasQuery, page, totalPages, total, onPageChange, onQuickSearch }: DiscoveryResultsProps) {
   const noQuery = !hasQuery && tutors.length === 0
   const noResults = hasQuery && tutors.length === 0
   const hasPagination = totalPages > 1
@@ -205,7 +212,7 @@ export function DiscoveryResults({ tutors, isLoading, isFetching, hasQuery, page
     <Loadable loading={isLoading} loadingComponent={<SkeletonList />}>
       <Switch>
         <Case when={noQuery}>
-          <EmptyPrompt />
+          <EmptyPrompt onQuickSearch={onQuickSearch} />
         </Case>
 
         <Case when={noResults}>

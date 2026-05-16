@@ -10,6 +10,7 @@ export const ROUTES = {
   REGISTER: '/register',
   TUTOR_ONBOARDING: '/tutor/onboard',
   TUTOR_DASHBOARD: '/tutor/dashboard',
+  STUDENT_DASHBOARD: '/dashboard',
   TUTOR_PROFILE_EDIT: '/tutor/profile/edit',
   TUTOR_NOTE_NEW: '/tutor/notes/new',
   TUTOR_NOTE_EDIT: '/tutor/notes/:id',

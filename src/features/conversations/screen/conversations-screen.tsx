@@ -1,12 +1,15 @@
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate, useLocation } from 'react-router-dom'
+import { useQueries } from '@tanstack/react-query'
 import { Repeat, Switch, Case, Default, Loadable } from 'meemaw'
-import { ConversationItem } from '@shared/ui'
+import { ConversationItem, SiteHeader } from '@shared/ui'
 import { EmptyState, SkeletonRow } from '@shared/ui'
 import { MessageCircle } from '@shared/ui/icons'
 import { ROUTES } from '@shared/constants/routes'
 import { useAuth } from '@features/auth/providers/use-auth'
 import { useConnections } from '../api/use-connections'
-import type { Connection } from '@shared/types'
+import { apiClient } from '@shared/api'
+import { Endpoints } from '@shared/constants/endpoints'
+import type { Connection, TutorProfile } from '@shared/types'
 
 function formatTime(iso: string): string {
   const date = new Date(iso)
@@ -19,9 +22,12 @@ function formatTime(iso: string): string {
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
 }
 
-function connectionLabel(conn: Connection, userId: string): string {
-  if (conn.studentId === userId) return `Tutor ${conn.tutorId}`
-  return `Student`
+function connectionLabel(conn: Connection, userId: string, tutorMap: Map<string, TutorProfile>): string {
+  if (conn.studentId === userId) {
+    const tutor = tutorMap.get(conn.tutorId)
+    return tutor?.displayName ?? 'Your tutor'
+  }
+  return 'Student'
 }
 
 function SkeletonList() {
@@ -37,14 +43,37 @@ function SkeletonList() {
 export function ConversationsScreen() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const connectionsQuery = useConnections()
-
-  if (!user) return <Navigate to={ROUTES.LOGIN} replace />
 
   const connections = connectionsQuery.data ?? []
 
+  // For connections where this user is the student, look up tutor profiles
+  const tutorIdsToFetch = connections
+    .filter(c => user != null && c.studentId === user.id)
+    .map(c => c.tutorId)
+
+  const tutorQueries = useQueries({
+    queries: tutorIdsToFetch.map(tutorId => ({
+      queryKey: ['tutor', tutorId],
+      queryFn: () => apiClient.get<TutorProfile>(Endpoints.TUTOR_PUBLIC(tutorId)),
+      staleTime: 5 * 60 * 1000,
+    })),
+  })
+
+  const tutorMap = new Map<string, TutorProfile>()
+  tutorIdsToFetch.forEach((id, i) => {
+    const data = tutorQueries[i]?.data
+    if (data) tutorMap.set(id, data)
+  })
+
+  const isLoading = connectionsQuery.isLoading || tutorQueries.some(q => q.isLoading)
+
+  if (!user) return <Navigate to={`${ROUTES.LOGIN}?next=${encodeURIComponent(location.pathname)}`} replace />
+
   return (
     <div className="min-h-screen bg-paper">
+      <SiteHeader />
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
         <div className="py-8 border-b border-hair mb-2">
           <h1 className="font-serif font-medium text-[28px] tracking-display text-ink">
@@ -55,7 +84,7 @@ export function ConversationsScreen() {
           </p>
         </div>
 
-        <Loadable loading={connectionsQuery.isLoading} loadingComponent={<SkeletonList />}>
+        <Loadable loading={isLoading} loadingComponent={<SkeletonList />}>
           <Switch>
             <Case when={connections.length === 0}>
               <EmptyState
@@ -68,9 +97,13 @@ export function ConversationsScreen() {
               <div className="py-2">
                 <Repeat each={connections}>
                   {(conn) => (
-                    <div key={conn.id} onClick={() => navigate(ROUTES.CONVERSATION.replace(':id', conn.id))} className="cursor-pointer">
+                    <div
+                      key={conn.id}
+                      onClick={() => navigate(ROUTES.CONVERSATION.replace(':id', conn.id))}
+                      className="cursor-pointer"
+                    >
                       <ConversationItem
-                        name={connectionLabel(conn, user.id)}
+                        name={connectionLabel(conn, user.id, tutorMap)}
                         preview={conn.status === 'closed' ? 'Conversation closed' : 'Tap to open conversation'}
                         time={formatTime(conn.openedAt ?? conn.createdAt)}
                       />

@@ -1,9 +1,8 @@
 import { useState } from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { Repeat, Switch, Case, Default, Loadable } from 'meemaw'
-import { Button, Chip, EmptyState } from '@shared/ui'
+import { SiteHeader, Button, Chip, EmptyState } from '@shared/ui'
 import { SkeletonRow } from '@shared/ui'
-import { Logo } from '@shared/ui'
 import { ShieldCheck } from '@shared/ui/icons'
 import { ROUTES } from '@shared/constants/routes'
 import { useAuth } from '@features/auth/providers/use-auth'
@@ -71,12 +70,12 @@ function SkeletonList() {
 
 export function AdminCredentialsScreen() {
   const { user } = useAuth()
-  const navigate = useNavigate()
+  const location = useLocation()
   const [filter, setFilter] = useState<Filter>('pending')
   const credentialsQuery = useAdminCredentials(filter)
   const reviewCredential = useReviewCredential()
 
-  if (!user) return <Navigate to={ROUTES.LOGIN} replace />
+  if (!user) return <Navigate to={`${ROUTES.LOGIN}?next=${encodeURIComponent(location.pathname)}`} replace />
   if (!isAdmin(user.role)) return <Navigate to={ROUTES.ROOT} replace />
 
   const credentials = credentialsQuery.data ?? []
@@ -92,17 +91,7 @@ export function AdminCredentialsScreen() {
 
   return (
     <div className="min-h-screen bg-paper">
-      <div className="bg-paper border-b border-hair">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <Logo />
-          <div className="flex items-center gap-3">
-            <Button variant="quiet" size="sm" onClick={() => navigate(ROUTES.ADMIN_REPORTS)}>
-              Reports
-            </Button>
-            <Chip variant="sage">Admin</Chip>
-          </div>
-        </div>
-      </div>
+      <SiteHeader />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         <div className="flex items-center justify-between mb-6">

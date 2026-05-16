@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { useParams, useNavigate, Navigate } from 'react-router-dom'
+import { useParams, useNavigate, Navigate, useLocation } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { Show, Switch, Case, Default, Repeat, Loadable } from 'meemaw'
 import { MessageBubble, SafetyBanner, ReportModal, Button, Chip } from '@shared/ui'
 import { SkeletonRow } from '@shared/ui'
@@ -11,6 +12,7 @@ import { useMessages, useSendMessage } from '../api/use-messages'
 import { useSocket } from '../api/use-socket'
 import { apiClient } from '@shared/api'
 import { Endpoints } from '@shared/constants/endpoints'
+import type { TutorProfile } from '@shared/types'
 
 function formatMsgTime(iso: string): string {
   return new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
@@ -29,6 +31,7 @@ function SkeletonMessages() {
 export function ConversationScreen() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
   const { user, token } = useAuth()
 
   const [reportOpen, setReportOpen] = useState(false)
@@ -49,11 +52,19 @@ export function ConversationScreen() {
   const messages = messagesQuery.data?.data ?? []
   const isClosed = connection?.status === 'closed'
 
+  // Fetch tutor profile when this user is the student, to show real name
+  const tutorProfileQuery = useQuery({
+    queryKey: ['tutor', connection?.tutorId ?? ''],
+    queryFn: () => apiClient.get<TutorProfile>(Endpoints.TUTOR_PUBLIC(connection!.tutorId)),
+    enabled: !!connection && !!user && connection.studentId === user.id,
+    staleTime: 5 * 60 * 1000,
+  })
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages.length])
 
-  if (!user) return <Navigate to={ROUTES.LOGIN} replace />
+  if (!user) return <Navigate to={`${ROUTES.LOGIN}?next=${encodeURIComponent(location.pathname)}`} replace />
 
   function handleSend() {
     const body = messageText.trim()
@@ -84,13 +95,15 @@ export function ConversationScreen() {
   }
 
   const otherPartyLabel = connection
-    ? user.id === connection.studentId ? `Tutor ${connection.tutorId}` : 'Student'
+    ? user.id === connection.studentId
+      ? (tutorProfileQuery.data?.displayName ?? 'Your tutor')
+      : 'Student'
     : '…'
 
   return (
     <div className="min-h-screen bg-paper flex flex-col">
       {/* Header */}
-      <div className="bg-paper border-b border-hair sticky top-0 z-10">
+      <div className="border-b border-hair sticky top-0 z-10" style={{ background: 'var(--sheet)', boxShadow: '0 1px 0 var(--hair), 0 2px 8px -4px rgba(31,35,28,0.06)' }}>
         <div className="max-w-2xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
           <Button variant="quiet" size="sm" onClick={() => navigate(ROUTES.CONVERSATIONS)} className="flex items-center gap-1.5 -ml-2">
             <ChevronLeft className="w-4 h-4" />
