@@ -170,6 +170,8 @@ export function HeroSection() {
                   zIndex: 1,
                   filter: "drop-shadow(0 32px 48px rgba(0,0,0,0.45))",
                 }}
+                fetchPriority="high"
+                decoding="async"
               />
             </div>
           </div>

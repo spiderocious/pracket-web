@@ -34,12 +34,12 @@ export function HowItWorksSection() {
     <section style={{ background: 'var(--green-900)' }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-8 py-14 sm:py-18">
 
-        <p
+        <h2
           className="font-sans font-semibold text-center mb-10 sm:mb-12"
           style={{ fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' }}
         >
           How it works
-        </p>
+        </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 relative">
           {STEPS.map((step, i) => (
