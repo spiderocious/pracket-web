@@ -64,7 +64,7 @@ export function SundayNotesSection() {
                   className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0"
                   style={{ background: 'var(--paper-deep)' }}
                 >
-                  <img src="/landing/avatar-1.png" alt="Amara Okonkwo" className="w-full h-full object-cover" />
+                  <img src="/landing/avatar-1.webp" alt="Amara Okonkwo" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <p className="font-sans font-semibold text-[13px]" style={{ color: 'var(--ink)' }}>
@@ -93,7 +93,7 @@ export function SundayNotesSection() {
 
             <div className="w-full overflow-hidden" style={{ height: '180px', background: 'var(--paper-deep)' }}>
               <img
-                src="/landing/notes-notebook.png"
+                src="/landing/notes-notebook.webp"
                 alt="An open notebook and cup of tea"
                 className="w-full h-full object-cover object-top"
               />

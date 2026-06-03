@@ -14,21 +14,21 @@ interface SpotlightTutor {
 const TUTORS: readonly SpotlightTutor[] = [
   {
     name: 'Amara Okonkwo',
-    avatarSrc: '/landing/avatar-1.png',
+    avatarSrc: '/landing/avatar-1.webp',
     subjects: ['Mathematics', 'Further Maths', 'Physics'],
     rate: '₦3,500/hr',
     format: 'Online',
   },
   {
     name: 'Tunde Adeyemi',
-    avatarSrc: '/landing/avatar-2.png',
+    avatarSrc: '/landing/avatar-2.webp',
     subjects: ['English Language', 'Literature', 'Creative Writing'],
     rate: '₦2,800/hr',
     format: 'In-person & Online',
   },
   {
     name: 'Chisom Eze',
-    avatarSrc: '/landing/avatar-3.png',
+    avatarSrc: '/landing/avatar-3.webp',
     subjects: ['Biology', 'Chemistry', 'Health Science'],
     rate: '₦3,000/hr',
     format: 'Online',
