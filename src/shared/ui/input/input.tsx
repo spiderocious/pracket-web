@@ -10,7 +10,7 @@ const SIZES: Record<InputSize, string> = {
   lg: 'h-14 px-5 text-[15px] rounded-[16px]',
 }
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   readonly size?: InputSize
   readonly mono?: boolean
   readonly error?: boolean

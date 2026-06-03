@@ -15,14 +15,16 @@ function buildHeaders(body?: unknown): HeadersInit {
 }
 
 export class ApiRequestError extends Error {
-  constructor(
-    readonly code: string,
-    override readonly message: string,
-    readonly fieldErrors?: Record<string, string>,
-    readonly status?: number
-  ) {
+  readonly code: string
+  readonly fieldErrors?: Record<string, string>
+  readonly status?: number
+
+  constructor(code: string, message: string, fieldErrors?: Record<string, string>, status?: number) {
     super(message)
     this.name = 'ApiRequestError'
+    this.code = code
+    this.fieldErrors = fieldErrors
+    this.status = status
   }
 }
 
