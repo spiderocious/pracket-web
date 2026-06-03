@@ -8,7 +8,7 @@ export function HeroSection() {
   return (
     <section
       className="relative overflow-hidden"
-      style={{ background: "var(--green-900)", minHeight: "92vh" }}
+      style={{ background: "var(--green-900)"}}
     >
       {/* Noise texture overlay */}
       <div
@@ -48,12 +48,12 @@ export function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-8 w-full py-20 sm:py-24">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12 items-center">
+      <div className="relative max-w-6xl mx-auto px-4 md:px-8 w-full py-20 md:py-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
           {/* Left: text — pinned to bottom */}
-          <div className="flex flex-col gap-8 landing-hero-text order-last sm:order-first">
+          <div className="flex flex-col gap-8 landing-hero-text order-last md:order-first items-center md:items-start">
             {/* Overline */}
-            <div className="inline-flex items-center gap-2 self-start">
+            <div className="inline-flex items-center gap-2 hidden md:inline-flex">
               <span
                 className="font-sans font-medium text-[12px] uppercase tracking-[0.18em]"
                 style={{ color: "rgba(255,255,255,0.5)" }}
@@ -64,7 +64,7 @@ export function HeroSection() {
 
             {/* Headline */}
             <h1
-              className="font-serif font-semibold"
+              className="font-serif font-semibold text-center md:text-left"
               style={{
                 fontSize: "clamp(3rem, 6vw, 5rem)",
                 letterSpacing: "-0.03em",
@@ -88,7 +88,7 @@ export function HeroSection() {
 
             {/* Sub-copy */}
             <p
-              className="font-sans leading-relaxed max-w-[380px]"
+              className="font-sans leading-relaxed max-w-[380px] w-full text-center md:text-left"
               style={{ fontSize: "1.0625rem", color: "rgba(255,255,255,0.58)" }}
             >
               Browse verified tutors, connect in minutes, start learning.
@@ -146,7 +146,7 @@ export function HeroSection() {
           </div>
 
           {/* Right: illustration — flush to bottom, slightly cropped */}
-          <div className="order-first sm:order-last flex justify-center sm:justify-end items-end landing-hero-image hidden md:block">
+          <div className="order-first md:order-last flex justify-center md:justify-end items-end landing-hero-image hidden md:block">
             <div
               className="relative w-full max-w-[480px]"
               style={{ aspectRatio: "1/1" }}
